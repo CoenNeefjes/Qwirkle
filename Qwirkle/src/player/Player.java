@@ -21,7 +21,7 @@ public abstract class Player {
         return playerNumber;
     }
 
-    public abstract int determineMove(Board board);
+//    public abstract int[] determineMove(Board board);
 
     public void makeMove(int row, int col, Tile tile) {
         Board board = new Board();
