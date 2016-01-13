@@ -14,6 +14,20 @@ public class Board {
 		board = new Tile[DIM][DIM];
 		reset();
 	}
+
+	public Board deepCopy() {
+		Board b = new Board();
+		for (int i = 0; i < DIM; i++) {
+			for (int j = 0; j < DIM; j++) {
+				b.setTile(i, j, this.getTile(i, j));
+			}
+		}
+		return b;
+	}
+
+    public int index(int row, int col) {
+        return row*DIM + col;
+    }
 	
 	public void reset() {
 		for (int i = 0; i < DIM; i++) {
@@ -23,28 +37,52 @@ public class Board {
 		}
 	}
 	
-	public Tile getTile(int i, int j) {
-		return board[i][j];
+	public Tile getTile(int row, int col) {
+		return board[row][col];
 	}
 	
-	public void setTile(int i, int j, Tile tile) {
-		board[i][j] = tile;
+	public void setTile(int row, int col, Tile tile) {
+		if (validMove(row, col, tile)) {
+			board[row][col] = tile;
+		} else {
+			System.out.println("Invalid move");
+		}
 	}
 	
-	public boolean isEmpty(int i, int j) {
-		return board[i][j].toString().equals("EMPTYEMPTY");
+	public boolean isEmpty(int row, int col) {
+		return board[row][col].toString().equals("EMPTY EMPTY");
 	}
+
+	public boolean isEmptyBoard() {
+		boolean ans = true;
+		for (int i = 0; i < DIM; i++) {
+			for (int j = 0; j < DIM; j++) {
+				if (!isEmpty(i,j)) ans = false;
+			}
+		}
+		return ans;
+	}
+
+    public boolean isFull() {
+        boolean ans = true;
+        for (int i = 0; i < DIM; i++) {
+            for (int j = 0; j < DIM; j++) {
+                if (isEmpty(i,j)) ans = false;
+            }
+        }
+        return ans;
+    }
+
+    public boolean validMove(int row, int col, Tile tile) {
+		return (isEmptyBoard() && row == 91 && col == 91) || (!isEmptyBoard() && isEmpty(row, col));
+    }
 	
 	
-	/*
+/*
 	public static void main(String[] args) {
 		Board board = new Board();
 		Tile tile = new Tile(Color.BLUE, Shape.CIRCLE);
-		board.setTile(13, 60, tile);
-		System.out.println(board.getTile(13, 60));
-		System.out.println(board.isEmpty(6, 6));
-		System.out.println(board.isEmpty(13, 60));
-	} */
+	}*/
 	
 	
 
