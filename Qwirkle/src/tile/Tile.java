@@ -13,22 +13,4 @@ public class Tile {
 	public String toString() {
 		return "" + color + " " + shape;
 	}
-	
-	
-	
-	
-	
-	/*
-	public boolean isEmpty(int line, int row) {
-		return false;
-	}
-	
-	public Shape getShape(int line, int row) {
-		return null;
-	}
-	
-	public Color getColor(int line, int row) {
-		return null;
-	}
-	*/
 }
