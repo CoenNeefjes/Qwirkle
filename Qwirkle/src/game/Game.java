@@ -47,6 +47,7 @@ public class Game {
         while (!board.gameOver()) {
             update();
             currentPlayer = currentPlayer + 1 % players.length;
+            update();
         }
     }
 
