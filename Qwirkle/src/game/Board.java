@@ -29,21 +29,13 @@ public class Board {
         return row*DIM + col;
     }
 
-	public int[] indexToRowCol(int index) {
-		int[] ans = new int[2];
-		ans[0] = index / DIM;
-		ans[1] = index % DIM;
-		return ans;
-	}
+
 
 	public Tile getTile(int row, int col) {
 		return board[row][col];
 	}
 
-	public Tile getTile(int index) {
-		int[] a = indexToRowCol(index);
-		return board[a[0]][a[1]];
-	}
+
 
 	public void setTile(int row, int col, Tile tile) {
 		if (validMove(row, col, tile)) {
@@ -53,22 +45,8 @@ public class Board {
 		}
 	}
 
-	public void setTile(int index, Tile tile) {
-		int[] a = indexToRowCol(index);
-		if (validMove(a[0], a[1], tile)) {
-			board[a[0]][a[1]] = tile;
-		} else {
-			System.out.println("Invalid move");
-		}
-	}
-
 	public boolean isEmpty(int row, int col) {
 		return board[row][col].toString().equals("EMPTY EMPTY");
-	}
-
-	public boolean isEmpty(int index) {
-		int[] a = indexToRowCol(index);
-		return board[a[0]][a[1]].toString().equals("EMPTY EMPTY");
 	}
 
 	public boolean isEmptyBoard() {
@@ -100,15 +78,6 @@ public class Board {
 		return ans;
 	}
 
-	public boolean validMove(int index, Tile tile) {
-		//TO DO: Read rules, implement validmove for tile part
-		int[] a = indexToRowCol(index);
-		boolean ans = false;
-		if (0 <= index && index < DIM * DIM) {
-			ans = (isEmptyBoard() && a[0] == 91 && a[1] == 91) || (!isEmptyBoard() && isEmpty(a[0], a[1]));
-		}
-		return ans;
-	}
 
 	public void reset() {
 		for (int i = 0; i < DIM; i++) {
