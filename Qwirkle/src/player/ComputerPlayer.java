@@ -4,14 +4,12 @@ import game.Board;
 import game.Game;
 import tile.Tile;
 
-import java.util.Scanner;
-
 /**
  * Created by Rens on 13-1-2016.
  */
-public class HumanPlayer extends LocalPlayer {
+public class ComputerPlayer extends LocalPlayer {
 
-    public HumanPlayer(String playerName) {
+    public ComputerPlayer(String playerName) {
         hand = new Tile[Game.MAX_HAND_SIZE];
         name = playerName;
     }
@@ -19,5 +17,10 @@ public class HumanPlayer extends LocalPlayer {
     @Override
     public int[] determineMove(Board board) {
         return new int[0];
+    }
+
+    @Override
+    public boolean isHandEmpty() {
+        return super.isHandEmpty();
     }
 }

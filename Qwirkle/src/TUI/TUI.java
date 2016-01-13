@@ -15,8 +15,10 @@ public class TUI {
     public int[] determineMove(Board board) {
         int[] ans = new int[2];
         Scanner in = new Scanner(System.in);
-        System.out.println("Enter move:");
+        System.out.println("If you want to move, enter 1. If you want to swap, enter 2");
+        System.out.println(in.next());
         if (in.hasNext()) {
+            System.out.println("Check 1");
             String input = in.next();
 
             switch (input) {
@@ -27,6 +29,7 @@ public class TUI {
                             char colorChar = tile.charAt(0);
                             char shapeChar = tile.charAt(1);
                             Tile tileMove = new Tile(colorCharToColor(colorChar), shapeCharToShape(shapeChar));
+                            System.out.println(tileMove);
                             if (in.hasNext()) {
                                 int row = Integer.parseInt(in.next());
                                 if (in.hasNext()) {
