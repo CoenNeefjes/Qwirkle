@@ -23,10 +23,10 @@ public abstract class Player {
 
     public abstract int determineMove(Board board);
 
-    public void makeMove(int index, Tile tile) {
+    public void makeMove(int row, int col, Tile tile) {
         Board board = new Board();
-        if (board.validMove(index, tile)) {
-            board.setTile(index, tile);
+        if (board.validMove(row, col, tile)) {
+            board.setTile(row, col, tile);
         }
     }
 
