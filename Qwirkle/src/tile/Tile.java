@@ -1,14 +1,21 @@
 package tile;
 
 public class Tile {
-	
-	private Color color;
-	private Shape shape;
+
+
+	private final Color color;
+	private final Shape shape;
 
 	public Tile (Color color, Shape shape) {
 		this.color = color;
 		this.shape = shape;
 	}
+
+//    public Tile () {
+//        System.out.println("Empty tile constructor called, only use this for test purposes");
+//        this.color = Color.EMPTY;
+//        this.shape = Shape.EMPTY;
+//    }
 
 	public Color getColor() {
 		return color;

@@ -1,20 +1,42 @@
 package game;
 
+import exceptions.TMPEXCEPTION;
+import game.move.Choice;
 import player.Player;
+import player.local.HumanPlayer;
+import server.TileBag;
+import tile.Shape;
+import tile.Tile;
+
+import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Game {
-    public static final int MAXPLAYERS = 8;
+    public static final int MAXPLAYERS = 4;
     public static final int MAX_HAND_SIZE = 6;
 
 
     private Board board;
-    protected Player[] players;
+    protected List<Player> players;
+    private TileBag tileBag;
 
     private int currentPlayer;
 
-    public Game() {
+    public Game(List<Player> players) throws TMPEXCEPTION {
+        if (players.size() <= MAXPLAYERS) {
+            this.players = players;
+        } else {
+            throw new TMPEXCEPTION(players.size());
+        }
+        tileBag = new TileBag();
+        for (Player p : players) {
+            p.addTile(tileBag.drawHand());
+        }
+    	currentPlayer = 0;
+    	board = new Board();
 
+    	start();
     }
 
     public void start() {
@@ -38,22 +60,41 @@ public class Game {
     }
 
     public void reset() {
-        currentPlayer= 0;
+        currentPlayer = 0;
         board.reset();
     }
 
     public void play() {
-        update();
-        while (!board.gameOver()) {
-            update();
-            currentPlayer = currentPlayer + 1 % players.length;
-            update();
-        }
+    	update();
+    	while (!gameEnded()) {
+            Choice choice = getCurrentPlayer().chooseMove(board, currentHand(getCurrentPlayer()));
+            if (choice == Choice.move) {
+                getCurrentPlayer().makeMove(board, currentHand(getCurrentPlayer()));
+            } else if (choice == Choice.swap) {
+                getCurrentPlayer().makeSwap(currentHand(getCurrentPlayer()));
+            }
+    	}
+    }
+    
+    public boolean gameEnded() {
+    	return false;
+    }
+    
+    public void nextPlayer() {
+    	this.currentPlayer = (this.currentPlayer + 1) % (players.size());
     }
 
     public void update() {
         System.out.println("\ncurrent game situation: \n\n" + board.toString()
                 + "\n");
+    }
+    
+    public Player getCurrentPlayer() {
+        return players.get(currentPlayer);
+    }
+
+    public Set<Tile> currentHand(Player player) {
+        return getCurrentPlayer().getHand();
     }
 
 

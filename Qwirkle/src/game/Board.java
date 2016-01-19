@@ -1,5 +1,6 @@
 package game;
 
+import player.Player;
 import tile.Color;
 import tile.Shape;
 import tile.Tile;
@@ -15,6 +16,7 @@ public class Board {
 		reset();
 	}
 
+    //Creates a copy of the board for the AI
 	public Board deepCopy() {
 		Board b = new Board();
 		for (int i = 0; i < DIM; i++) {
@@ -24,11 +26,6 @@ public class Board {
 		}
 		return b;
 	}
-
-    public int index(int row, int col) {
-        return row*DIM + col;
-    }
-
 
 
 	public Tile getTile(int row, int col) {
@@ -59,16 +56,6 @@ public class Board {
 		return ans;
 	}
 
-    public boolean isFull() {
-        boolean ans = true;
-        for (int i = 0; i < DIM; i++) {
-            for (int j = 0; j < DIM; j++) {
-                if (isEmpty(i,j)) ans = false;
-            }
-        }
-        return ans;
-    }
-
 	public boolean validMove(int row, int col, Tile tile) {
 		//TO DO: Read rules, implement validmove for tile part
 		boolean ans = false;
@@ -79,7 +66,13 @@ public class Board {
 	}
 
 
-	public void reset() {
+
+    public boolean gameOver() {
+        return false;
+    }
+
+
+    public void reset() {
 		for (int i = 0; i < DIM; i++) {
 			for (int j = 0; j < DIM; j++) {
 				board[i][j] = new Tile(Color.EMPTY, Shape.EMPTY);
