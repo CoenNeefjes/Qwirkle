@@ -1,126 +1,106 @@
 package TUI;
 
 import game.Board;
-import game.move.Choice;
-import game.move.Move;
-import game.move.Swap;
+import move.Choice;
+import move.Move;
+import move.Swap;
 import tile.Color;
 import tile.Shape;
 import tile.Tile;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
 
 /**
  * Created by Rens on 13-1-2016.
  */
 public class TUI {
 
-    public Choice chooseMove(Board board, Set<Tile> hand) {
+    public Choice chooseMove(Board board, List<Tile> hand) {
         Scanner in = new Scanner(System.in);
-        System.out.println("If you want to move, enter \"move please mister\". If you want to swap, enter \"swap please mister\"");
-        if (in.hasNext()) {
-            String choice = in.next();
-            if (choice.equals("move please mister")) {
-                return Choice.move;
-            } else if (choice.equals("swap please mister")) {
-                return Choice.swap;
+        boolean chosen = false;
+
+        while (!chosen) {
+            System.out.println("If you want to move, enter \"MOVE\". If you want to swap, enter \"SWAP\"");
+            if (in.hasNext()) {
+                String choice = in.nextLine();
+                    switch (choice) {
+                        case ("MOVE"):
+                            return Choice.move;
+                        case ("SWAP"):
+                            return Choice.swap;
+                        case ("BOARD"):
+                            System.out.println(board.toString());
+                            break;
+                    }
+
             } else {
-                System.out.println("Invalid move");
-                return null;
+                System.out.println("Invalid command");
             }
-        } else {
-            System.out.println("Invalid command");
-            return null;
         }
+        return null;
     }
 
 
-    public Move makeMove(Board board, Set<Tile> hand) {
+    public Move makeMove(Board board, List<Tile> hand) throws Color.ColorNotFoundException, Shape.ShapeNotFoundException {
         Move move;
-        Tile[] moveTiles = new Tile[6];
-        int[] moveRows = new int[6];
-        int[] moveCols = new int[6];
+//        Tile[] moveTiles = new Tile[6];
+//        int[] moveRows = new int[6];
+//        int[] moveCols = new int[6];
+        List<Tile> tileList = new ArrayList<Tile>();
+        List<Integer> rowList = new ArrayList<Integer>();
+        List<Integer> colList = new ArrayList<Integer>();
+        System.out.println("Enter your move, in the following manner:" +
+                "\"COLORCHARshapechar row col\"");
         Scanner in = new Scanner(System.in);
         for (int i = 0; i < 6; i++) {
             if (in.hasNext()) {
                 String tileName = in.next();
-                if (tileName.equals("END")) {
-                    move = new Move(moveTiles, moveCols, moveRows);
-                    System.out.println(move);
-                    return move;
+                switch (tileName) {
+                    case ("END"):
+//                        move = new Move(moveTiles, moveCols, moveRows);
+                        move = new Move(tileList, colList, rowList);
+                        System.out.println(move);
+                        int index = 0;
+                        for (Tile t : move.getTiles()) {
+//                            board.setTile(move.getRows()[index], move.getCols()[index], t);
+                            board.setTile(rowList.get(index), colList.get(index), tileList.get(index));
+                            index++;
+                        }
+                        return move;
+                    case ("BOARD"):
+                        board.toString();
+                        break;
                 }
                 char colorChar = tileName.charAt(0);
                 char shapeChar = tileName.charAt(1);
-                moveTiles[i] = new Tile(colorCharToColor(colorChar), shapeCharToShape(shapeChar));
-                System.out.println("Tile is " + moveTiles[i]);
+                tileList.add(i, new Tile(Color.colorCharToColor(colorChar), Shape.shapeCharToShape(shapeChar)));
+//                moveTiles[i] = new Tile(Color.colorCharToColor(colorChar), Shape.shapeCharToShape(shapeChar));
+                System.out.println("Tile is " + tileList.get(i));
                 if (in.hasNext()) {
-                    moveRows[i] = Integer.parseInt(in.next());
+                    rowList.add(i, Integer.parseInt(in.next()));
+//                    moveRows[i] = Integer.parseInt(in.next());
                     if (in.hasNext()) {
-                        moveCols[i] = Integer.parseInt(in.next());
+                        colList.add(i, Integer.parseInt(in.next()));
+//                        moveCols[i] = Integer.parseInt(in.next());
                     }
                 }
             }
         }
-        move = new Move(moveTiles, moveCols, moveRows);
+        move = new Move(tileList, colList, rowList);
+        int index = 0;
+        for (Tile t : move.getTiles()) {
+            board.setTile(move.getRows().get(index), move.getCols().get(index), t);
+//            board.setTile(move.getRows()[index], move.getCols()[index], t);
+            index++;
+        }
+        System.out.println(move);
         return move;
     }
 
-    public Swap makeSwap(Set<Tile> hand) {
+    public Swap makeSwap(List<Tile> hand) {
         return null;
-    }
-
-    public Color colorCharToColor(char colorCode) {
-        Color color;
-        switch (colorCode) {
-            case ('R'):
-                color = Color.RED;
-                break;
-            case ('O'):
-                color = Color.ORANGE;
-                break;
-            case ('B'):
-                color = Color.BLUE;
-                break;
-            case ('Y'):
-                color = Color.YELLOW;
-                break;
-            case ('G'):
-                color = Color.GREEN;
-                break;
-            case ('P'):
-                color = Color.PURPLE;
-                break;
-            default:
-                color = Color.EMPTY;
-        }
-        return color;
-    }
-
-    public Shape shapeCharToShape(char shapeCode) {
-        Shape shape;
-        switch (shapeCode) {
-            case ('o'):
-                shape = Shape.CIRCLE;
-                break;
-            case ('d'):
-                shape = Shape.DIAMOND;
-                break;
-            case ('s'):
-                shape = Shape.SQUARE;
-                break;
-            case ('c'):
-                shape = Shape.CLOVER;
-                break;
-            case ('x'):
-                shape = Shape.CROSS;
-                break;
-            case ('*'):
-                shape = Shape.STAR;
-                break;
-            default:
-                shape = Shape.EMPTY;
-        }
-        return shape;
     }
 
 }

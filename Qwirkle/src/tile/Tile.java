@@ -26,6 +26,8 @@ public class Tile {
 	}
 
 	public String toString() {
-		return "" + color + " " + shape;
+//        String result = "" + color + " " + shape;
+//        return String.format("%1$14s", "" + color + " " + shape);
+        return "" + color + " " + shape;
 	}
 }

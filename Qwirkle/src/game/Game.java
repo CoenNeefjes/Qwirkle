@@ -1,16 +1,13 @@
 package game;
 
-import exceptions.TMPEXCEPTION;
-import game.move.Choice;
+import exceptions.TooManyPlayersException;
+import move.Choice;
 import player.Player;
-import player.local.HumanPlayer;
 import server.TileBag;
-import tile.Shape;
 import tile.Tile;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
 
 public class Game {
     public static final int MAXPLAYERS = 4;
@@ -23,11 +20,12 @@ public class Game {
 
     private int currentPlayer;
 
-    public Game(List<Player> players) throws TMPEXCEPTION {
+    
+    public Game(List<Player> players) throws TooManyPlayersException {
         if (players.size() <= MAXPLAYERS) {
             this.players = players;
         } else {
-            throw new TMPEXCEPTION(players.size());
+            throw new TooManyPlayersException(players.size());
         }
         tileBag = new TileBag();
         for (Player p : players) {
@@ -73,6 +71,7 @@ public class Game {
             } else if (choice == Choice.swap) {
                 getCurrentPlayer().makeSwap(currentHand(getCurrentPlayer()));
             }
+            nextPlayer();
     	}
     }
     
@@ -81,10 +80,11 @@ public class Game {
     }
     
     public void nextPlayer() {
-    	this.currentPlayer = (this.currentPlayer + 1) % (players.size());
+        this.currentPlayer = (this.currentPlayer + 1) % (players.size());
     }
 
     public void update() {
+        System.out.println("Current player is now number " + this.currentPlayer);
         System.out.println("\ncurrent game situation: \n\n" + board.toString()
                 + "\n");
     }
@@ -93,7 +93,7 @@ public class Game {
         return players.get(currentPlayer);
     }
 
-    public Set<Tile> currentHand(Player player) {
+    public List<Tile> currentHand(Player player) {
         return getCurrentPlayer().getHand();
     }
 

@@ -1,26 +1,28 @@
 package player;
 
 import game.Board;
-import game.move.Choice;
-import game.move.Move;
-import game.move.Swap;
+import move.Choice;
+import move.Move;
+import move.Swap;
 import tile.Tile;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public abstract class Player {
 	
 	protected String name;
 	private int playerNumber;
-    protected Set<Tile> hand;
+    protected List<Tile> hand = new ArrayList<Tile>();
 
-    public abstract Choice chooseMove(Board board, Set<Tile> hand);
+    public abstract Choice chooseMove(Board board, List<Tile> hand);
 
-    public abstract Swap makeSwap(Set<Tile> hand);
+    public abstract Swap makeSwap(List<Tile> hand);
 	
-    public abstract Move makeMove(Board board, Set<Tile> hand);
+    public abstract Move makeMove(Board board, List<Tile> hand);
 
-    public Set<Tile> getHand() {
+    public List<Tile> getHand() {
         return this.hand;
     }
 

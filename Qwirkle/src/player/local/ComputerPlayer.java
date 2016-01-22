@@ -1,13 +1,13 @@
 package player.local;
 
 import game.Board;
-import game.Game;
-import game.move.Choice;
-import game.move.Move;
-import game.move.Swap;
+import move.Choice;
+import move.Move;
+import move.Swap;
 import tile.Tile;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Rens on 13-1-2016.
@@ -15,22 +15,22 @@ import java.util.Set;
 public class ComputerPlayer extends LocalPlayer {
 
     public ComputerPlayer(String playerName) {
-        hand = new Tile[Game.MAX_HAND_SIZE];
+        hand = new ArrayList<Tile>();
         name = playerName;
     }
 
     @Override
-    public Choice chooseMove(Board board, Set<Tile> hand) {
+    public Choice chooseMove(Board board, List<Tile> hand) {
         return null;
     }
 
     @Override
-    public Swap makeSwap(Set<Tile> hand) {
+    public Swap makeSwap(List<Tile> hand) {
         return null;
     }
 
     @Override
-    public Move makeMove(Board board, Set<Tile> hand) {
+    public Move makeMove(Board board, List<Tile> hand) {
         return null;
     }
 
