@@ -23,14 +23,18 @@ public class Board {
 	private Tile[][] board;
 	
 	/**
-	 * 
+	 * Creates a new board and calls the reset() method to empty the board.
 	 */
 	public Board() {
 		board = new Tile[DIM][DIM];
 		reset();
 	}
 
-    //Creates a copy of the board for the AI
+    /**
+     * Creates a copy of the board for the AI.
+     * 
+     * @return the complete board
+     */
 	public Board deepCopy() {
 		Board b = new Board();
 		for (int i = 0; i < DIM; i++) {
@@ -41,21 +45,41 @@ public class Board {
 		return b;
 	}
 
-
+	/**
+	 * gets the tile at the given row and column.
+	 * 
+	 * @param row Integer
+	 * @param col Integer
+	 * @return the Tile that is at the given coordinates
+	 */
 	public Tile getTile(int row, int col) {
 		return board[row][col];
 	}
 
 
-
+	/**
+	 * puts a tile on the row and column
+	 * 
+	 * @param row Integer
+	 * @param col Integer
+	 * @param tile Tile
+	 */
 	public void setTile(int row, int col, Tile tile) {
 		if (validMove(row, col, tile)) {
 			board[row][col] = tile;
 		} else {
-			System.out.println("Invalid move");
+//			System.out.println("Invalid move");
 		}
 	}
 
+	/**
+	 * returns a boolean whether the tile at the coordinates
+	 * is empty or not.
+	 * 
+	 * @param row Integer
+	 * @param col Integer
+	 * @return boolean whether the place on the board is empty
+	 */
 	public boolean isEmpty(int row, int col) {
 //        System.out.println(getTile(91, 91));
 //        System.out.println("" + row + col);
@@ -65,6 +89,11 @@ public class Board {
 
 	}
 
+	/**
+	 * returns a boolean whether the entire board is empty or not.
+	 * 
+	 * @return boolean whether the board is empty
+	 */
 	public boolean isEmptyBoard() {
 		boolean ans = true;
 		for (int i = 0; i < DIM; i++) {
@@ -75,7 +104,14 @@ public class Board {
 		return ans;
 	}
 	
-
+	/**
+	 * returns a boolean wheter the given tile at the given coordinates is valid
+	 * 
+	 * @param row Integer
+	 * @param col Integer
+	 * @param tile Tile (the Tile that needs to be checked)
+	 * @return boolean whether the move is valid
+	 */
 	public boolean validMove(int row, int col, Tile tile) {
 		return(validMoveStart(row, col, tile) || (validMoveNotStart(row, col, tile)) && validSurroundings(row, col, tile));
 	}
@@ -89,40 +125,26 @@ public class Board {
 	}
 	
 	public boolean validSurroundings(int row, int col, Tile tile) {
-		boolean result = false;
-		if ((!isEmpty(row, col+1) && !isEmpty(row, col+2) && !isEmpty(row, col+3) && !isEmpty(row, col+4) && !isEmpty(row, col+5) && !isEmpty(row, col+6)) ||
-			(!isEmpty(row, col-1) && !isEmpty(row, col-2) && !isEmpty(row, col-3) && !isEmpty(row, col-4) && !isEmpty(row, col-5) && !isEmpty(row, col-6)) ||	
-			(!isEmpty(row+1, col) && !isEmpty(row+2, col) && !isEmpty(row+3, col) && !isEmpty(row+4, col) && !isEmpty(row+5, col) && !isEmpty(row+6, col)) ||
-			(!isEmpty(row-1, col) && !isEmpty(row-2, col) && !isEmpty(row-3, col) && !isEmpty(row-4, col) && !isEmpty(row-5, col) && !isEmpty(row-6, col)) ){
-			result = false;
-		} else if(
-				((tile.getColor() == board[row+1][col].getColor()) &&
-				(tile.getShape() != board[row+1][col].getShape()) && (tile.getShape() != board[row+2][col].getShape()) && (tile.getShape() != board[row+3][col].getShape()) && (tile.getShape() != board[row+4][col].getShape()) && (tile.getShape() != board[row+5][col].getShape()))
-				||
-				((tile.getColor() == board[row-1][col].getColor()) &&
-				(tile.getShape() != board[row-1][col].getShape()) && (tile.getShape() != board[row-2][col].getShape()) && (tile.getShape() != board[row-3][col].getShape()) && (tile.getShape() != board[row-4][col].getShape()) && (tile.getShape() != board[row-5][col].getShape())) 
-				||
-				((tile.getColor() == board[row][col+1].getColor()) &&
-				(tile.getShape() != board[row][col+1].getShape()) && (tile.getShape() != board[row][col+2].getShape()) && (tile.getShape() != board[row][col+3].getShape()) && (tile.getShape() != board[row][col+4].getShape()) && (tile.getShape() != board[row][col+5].getShape()))
-				||
-				((tile.getColor() == board[row][col-1].getColor()) &&
-				(tile.getShape() != board[row][col-1].getShape()) && (tile.getShape() != board[row][col-2].getShape()) && (tile.getShape() != board[row][col-3].getShape()) && (tile.getShape() != board[row][col-4].getShape()) && (tile.getShape() != board[row][col-5].getShape()))
-				||
-				((tile.getShape() == board[row+1][col].getShape()) &&
-				(tile.getColor() != board[row+1][col].getColor()) && (tile.getColor() != board[row+2][col].getColor()) && (tile.getColor() != board[row+3][col].getColor()) && (tile.getColor() != board[row+4][col].getColor()) && (tile.getColor() != board[row+5][col].getColor()))
-				||
-				((tile.getShape() == board[row-1][col].getShape()) &&
-				(tile.getColor() != board[row-1][col].getColor()) && (tile.getColor() != board[row-2][col].getColor()) && (tile.getColor() != board[row-3][col].getColor()) && (tile.getColor() != board[row-4][col].getColor()) && (tile.getColor() != board[row-5][col].getColor()))
-				||
-				((tile.getShape() == board[row][col+1].getShape()) &&
-				(tile.getColor() != board[row][col+1].getColor()) && (tile.getColor() != board[row][col+2].getColor()) && (tile.getColor() != board[row][col+3].getColor()) && (tile.getColor() != board[row][col+4].getColor()) && (tile.getColor() != board[row][col+5].getColor()))
-				||
-				((tile.getShape() == board[row][col-1].getShape()) &&
-				(tile.getColor() != board[row][col-1].getColor()) && (tile.getColor() != board[row][col-2].getColor()) && (tile.getColor() != board[row][col-3].getColor()) && (tile.getColor() != board[row][col-4].getColor()) && (tile.getColor() != board[row][col-5].getColor()))
-				) {
-			return true;
+		boolean differentTiles = false;
+		//First, check if there are lines of 6 tiles attacked to the tile you want to place 
+		//(if you want to place a tile, the current line must be shorter than 6 tiles)
+		boolean lineOfSix = true;
+		for (int i = 1; i < 7; i++) {
+			if (isEmpty(row, col+i) && isEmpty(row, col-i) && isEmpty(row+i, col) && isEmpty(row-i, col)) lineOfSix = false;
 		}
-		return result;
+		for (int i = 1; i < 6; i++) {
+			if (equalTiles(tile, getTile(row, col+i)) || equalTiles(tile, getTile(row, col-i)) || 
+					equalTiles(tile, getTile(row+i, col)) || equalTiles(tile, getTile(row-i, col))) differentTiles = true;
+		}
+		//You want lineOfSix to be false because if it is true then there are no empty tiles within 6 of the tile to be placed
+		//You want differentTiles to be false, becuase if it is true then there are other tiles in the surroundings which
+		//are the same
+
+		return !(lineOfSix || differentTiles);
+	}
+	
+	public boolean equalTiles(Tile tile1, Tile tile2) {
+		return tile1.getColor().equals(tile2.getColor()) && tile1.getShape().equals(tile2.getShape());
 	}
 
 

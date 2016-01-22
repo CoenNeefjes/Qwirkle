@@ -9,6 +9,12 @@ import tile.Tile;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Game is the class which 
+ * @author Rens Oliemans, Coen Neefjes
+ *
+ */
+
 public class Game {
     public static final int MAXPLAYERS = 4;
     public static final int MAX_HAND_SIZE = 6;
@@ -20,7 +26,8 @@ public class Game {
 
     private int currentPlayer;
 
-    
+    /**
+     */
     public Game(List<Player> players) throws TooManyPlayersException {
         if (players.size() <= MAXPLAYERS) {
             this.players = players;
@@ -37,6 +44,10 @@ public class Game {
     	start();
     }
 
+    /**
+     * Starts the game. If the game has ended (play() has ended), 
+     * you get a message if you want to play again or not.
+     */
     public void start() {
         boolean doorgaan = true;
         while (doorgaan) {

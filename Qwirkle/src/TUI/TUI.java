@@ -45,9 +45,6 @@ public class TUI {
 
     public Move makeMove(Board board, List<Tile> hand) throws Color.ColorNotFoundException, Shape.ShapeNotFoundException {
         Move move;
-//        Tile[] moveTiles = new Tile[6];
-//        int[] moveRows = new int[6];
-//        int[] moveCols = new int[6];
         List<Tile> tileList = new ArrayList<Tile>();
         List<Integer> rowList = new ArrayList<Integer>();
         List<Integer> colList = new ArrayList<Integer>();

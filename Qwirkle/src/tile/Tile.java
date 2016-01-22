@@ -13,11 +13,7 @@ public class Tile {
 		this.shape = shape;
 	}
 
-//    public Tile () {
-//        System.out.println("Empty tile constructor called, only use this for test purposes");
-//        this.color = Color.EMPTY;
-//        this.shape = Shape.EMPTY;
-//    }
+
 
 	public Color getColor() {
 		return color;
@@ -28,8 +24,6 @@ public class Tile {
 	}
 
 	public String toString() {
-//        String result = "" + color + " " + shape;
-//        return String.format("%1$14s", "" + color + " " + shape);
         return "" + color + " " + shape;
 	}
 	
