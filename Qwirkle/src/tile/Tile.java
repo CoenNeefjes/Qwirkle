@@ -1,5 +1,7 @@
 package tile;
 
+import game.Board;
+
 public class Tile {
 
 
@@ -30,4 +32,13 @@ public class Tile {
 //        return String.format("%1$14s", "" + color + " " + shape);
         return "" + color + " " + shape;
 	}
+	
+    @Override
+    public boolean equals(Object o) {
+    	if (o instanceof Tile) {
+    		Tile t = (Tile) o;
+    		return t.getColor().equals(this.color) && t.getShape().equals(this.shape);
+    	}
+    	return false;
+    }
 }
