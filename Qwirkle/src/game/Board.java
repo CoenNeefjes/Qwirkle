@@ -5,12 +5,26 @@ import tile.Color;
 import tile.Shape;
 import tile.Tile;
 
+/**
+ * <h1>Board</h1>
+ * Board is the class that holds all the tiles in the form of two Tile arrays to 
+ * simulate the rows and columns. 
+ * <p>
+ * In the Board class are methods for placing tiles,
+ * getting tiles and checking if tiles are valid.
+ * 
+ *
+ */
+
 public class Board {
 	
 	public static final int DIM = 183;
 	
 	private Tile[][] board;
 	
+	/**
+	 * 
+	 */
 	public Board() {
 		board = new Tile[DIM][DIM];
 		reset();
@@ -60,14 +74,55 @@ public class Board {
 		}
 		return ans;
 	}
+	
 
 	public boolean validMove(int row, int col, Tile tile) {
-		//TO DO: Read rules, implement validmove for tile part
-		boolean ans = false;
-		if (0 <= row * col && row * col < DIM * DIM) {
-			ans = (isEmptyBoard() && row == 91 && col == 91) || (!isEmptyBoard() && isEmpty(row, col));
+		return(validMoveStart(row, col, tile) || (validMoveNotStart(row, col, tile)) && validSurroundings(row, col, tile));
+	}
+	
+	public boolean validMoveStart(int row, int col, Tile tile) {
+		return (isEmptyBoard() && row == 91 && col == 91);
+	}
+	
+	public boolean validMoveNotStart(int row, int col, Tile tile) {
+		return (!isEmptyBoard() && isEmpty(row, col) && (row >= 0 && row <= DIM && col >= 0 && col<= DIM));
+	}
+	
+	public boolean validSurroundings(int row, int col, Tile tile) {
+		boolean result = false;
+		if ((!isEmpty(row, col+1) && !isEmpty(row, col+2) && !isEmpty(row, col+3) && !isEmpty(row, col+4) && !isEmpty(row, col+5) && !isEmpty(row, col+6)) ||
+			(!isEmpty(row, col-1) && !isEmpty(row, col-2) && !isEmpty(row, col-3) && !isEmpty(row, col-4) && !isEmpty(row, col-5) && !isEmpty(row, col-6)) ||	
+			(!isEmpty(row+1, col) && !isEmpty(row+2, col) && !isEmpty(row+3, col) && !isEmpty(row+4, col) && !isEmpty(row+5, col) && !isEmpty(row+6, col)) ||
+			(!isEmpty(row-1, col) && !isEmpty(row-2, col) && !isEmpty(row-3, col) && !isEmpty(row-4, col) && !isEmpty(row-5, col) && !isEmpty(row-6, col)) ){
+			result = false;
+		} else if(
+				((tile.getColor() == board[row+1][col].getColor()) &&
+				(tile.getShape() != board[row+1][col].getShape()) && (tile.getShape() != board[row+2][col].getShape()) && (tile.getShape() != board[row+3][col].getShape()) && (tile.getShape() != board[row+4][col].getShape()) && (tile.getShape() != board[row+5][col].getShape()))
+				||
+				((tile.getColor() == board[row-1][col].getColor()) &&
+				(tile.getShape() != board[row-1][col].getShape()) && (tile.getShape() != board[row-2][col].getShape()) && (tile.getShape() != board[row-3][col].getShape()) && (tile.getShape() != board[row-4][col].getShape()) && (tile.getShape() != board[row-5][col].getShape())) 
+				||
+				((tile.getColor() == board[row][col+1].getColor()) &&
+				(tile.getShape() != board[row][col+1].getShape()) && (tile.getShape() != board[row][col+2].getShape()) && (tile.getShape() != board[row][col+3].getShape()) && (tile.getShape() != board[row][col+4].getShape()) && (tile.getShape() != board[row][col+5].getShape()))
+				||
+				((tile.getColor() == board[row][col-1].getColor()) &&
+				(tile.getShape() != board[row][col-1].getShape()) && (tile.getShape() != board[row][col-2].getShape()) && (tile.getShape() != board[row][col-3].getShape()) && (tile.getShape() != board[row][col-4].getShape()) && (tile.getShape() != board[row][col-5].getShape()))
+				||
+				((tile.getShape() == board[row+1][col].getShape()) &&
+				(tile.getColor() != board[row+1][col].getColor()) && (tile.getColor() != board[row+2][col].getColor()) && (tile.getColor() != board[row+3][col].getColor()) && (tile.getColor() != board[row+4][col].getColor()) && (tile.getColor() != board[row+5][col].getColor()))
+				||
+				((tile.getShape() == board[row-1][col].getShape()) &&
+				(tile.getColor() != board[row-1][col].getColor()) && (tile.getColor() != board[row-2][col].getColor()) && (tile.getColor() != board[row-3][col].getColor()) && (tile.getColor() != board[row-4][col].getColor()) && (tile.getColor() != board[row-5][col].getColor()))
+				||
+				((tile.getShape() == board[row][col+1].getShape()) &&
+				(tile.getColor() != board[row][col+1].getColor()) && (tile.getColor() != board[row][col+2].getColor()) && (tile.getColor() != board[row][col+3].getColor()) && (tile.getColor() != board[row][col+4].getColor()) && (tile.getColor() != board[row][col+5].getColor()))
+				||
+				((tile.getShape() == board[row][col-1].getShape()) &&
+				(tile.getColor() != board[row][col-1].getColor()) && (tile.getColor() != board[row][col-2].getColor()) && (tile.getColor() != board[row][col-3].getColor()) && (tile.getColor() != board[row][col-4].getColor()) && (tile.getColor() != board[row][col-5].getColor()))
+				) {
+			return true;
 		}
-		return ans;
+		return result;
 	}
 
 
