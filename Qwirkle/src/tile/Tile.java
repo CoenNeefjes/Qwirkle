@@ -24,7 +24,7 @@ public class Tile {
 	}
 
 	public String toString() {
-        return "" + color + " " + shape;
+        return String.format("%-14s", (color + " " + shape));
 	}
 	
     @Override

@@ -1,7 +1,5 @@
 package tile;
 
-import sun.security.provider.SHA;
-
 public enum Shape {
 	
 	CIRCLE('c'),

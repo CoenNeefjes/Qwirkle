@@ -34,6 +34,7 @@ public class Qwirkle {
                 playerList.add((humanPlayers+i), player);
             }
         }
+//        in.close();
         Game game = null;
         try {
             game = new Game(playerList);
@@ -43,7 +44,6 @@ public class Qwirkle {
         if (game != null) game.start();
 
         //TO DO:    Read Qwirkle rules for scoring points;
-        //          Implement validMove in current game;
         //          Implement server
         //          Add JML
         //          Add Javadoc

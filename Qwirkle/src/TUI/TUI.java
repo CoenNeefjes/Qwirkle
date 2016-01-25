@@ -39,6 +39,7 @@ public class TUI {
                 System.out.println("Invalid command");
             }
         }
+//        in.close();
         return null;
     }
 
@@ -56,15 +57,9 @@ public class TUI {
                 String tileName = in.next();
                 switch (tileName) {
                     case ("END"):
-//                        move = new Move(moveTiles, moveCols, moveRows);
                         move = new Move(tileList, colList, rowList);
                         System.out.println(move);
-                        int index = 0;
-                        for (Tile t : move.getTiles()) {
-//                            board.setTile(move.getRows()[index], move.getCols()[index], t);
-                            board.setTile(rowList.get(index), colList.get(index), tileList.get(index));
-                            index++;
-                        }
+                        board.setTiles(move.getRows(), move.getCols(), move.getTiles());
                         return move;
                     case ("BOARD"):
                         board.toString();
@@ -73,25 +68,17 @@ public class TUI {
                 char colorChar = tileName.charAt(0);
                 char shapeChar = tileName.charAt(1);
                 tileList.add(i, new Tile(Color.colorCharToColor(colorChar), Shape.shapeCharToShape(shapeChar)));
-//                moveTiles[i] = new Tile(Color.colorCharToColor(colorChar), Shape.shapeCharToShape(shapeChar));
                 System.out.println("Tile is " + tileList.get(i));
                 if (in.hasNext()) {
                     rowList.add(i, Integer.parseInt(in.next()));
-//                    moveRows[i] = Integer.parseInt(in.next());
                     if (in.hasNext()) {
                         colList.add(i, Integer.parseInt(in.next()));
-//                        moveCols[i] = Integer.parseInt(in.next());
                     }
                 }
             }
         }
         move = new Move(tileList, colList, rowList);
-        int index = 0;
-        for (Tile t : move.getTiles()) {
-            board.setTile(move.getRows().get(index), move.getCols().get(index), t);
-//            board.setTile(move.getRows()[index], move.getCols()[index], t);
-            index++;
-        }
+        board.setTiles(move.getRows(), move.getCols(), move.getTiles());
         System.out.println(move);
         return move;
     }

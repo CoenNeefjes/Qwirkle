@@ -1,6 +1,8 @@
 package game;
 
-import player.Player;
+import java.util.List;
+
+//import player.Player;
 import tile.Color;
 import tile.Shape;
 import tile.Tile;
@@ -20,7 +22,9 @@ public class Board {
 	
 	public static final int DIM = 183;
 	
-	private Tile[][] board;
+	private Tile emptyTile = new Tile(Color.EMPTY, Shape.EMPTY);
+	
+	private /*@ non_null */ Tile[][] board;
 	
 	/**
 	 * Creates a new board and calls the reset() method to empty the board.
@@ -52,7 +56,9 @@ public class Board {
 	 * @param col Integer
 	 * @return the Tile that is at the given coordinates
 	 */
-	public Tile getTile(int row, int col) {
+	/*@ requires row >= 0 && row <= DIM && col >= 0 && col <= DIM;
+	 */
+	/*@ pure */public Tile getTile(int row, int col) {
 		return board[row][col];
 	}
 
@@ -64,12 +70,40 @@ public class Board {
 	 * @param col Integer
 	 * @param tile Tile
 	 */
+	/*@ requires row >= 0 && row <= DIM && col >= 0 && col <= DIM && tile != null;
+	 	ensures validMove(row, col, tile) ==> getTile(row, col) == tile;
+	 @*/
 	public void setTile(int row, int col, Tile tile) {
 		if (validMove(row, col, tile)) {
 			board[row][col] = tile;
 		} else {
-//			System.out.println("Invalid move");
+			System.out.println(tile.toString());
+			System.out.println("Invalid move");
 		}
+	}
+	
+	/*@ requires rows.size() == cols.size() && rows.size() == tiles.size() && rows.size() != 0;
+	 //UNFINISHED* ensures \forall Tile tile; tiles.contains(tile); getTile(row, col, tile) == tile;
+	 */
+	public void setTiles(List<Integer> rows, List<Integer> cols, List<Tile> tiles) {
+		boolean allValid = true;
+		if (rows.size() == cols.size() && rows.size() == tiles.size()) {
+			for (int i = 0; i < tiles.size(); i++) {
+				if (!validMove(rows.get(i), cols.get(i), tiles.get(i))) allValid = false;
+			}
+			System.out.println("Check");
+			if (allValid) {
+				for (int i = 0; i < tiles.size(); i++) {
+					setTile(rows.get(i), cols.get(i), tiles.get(i));
+				}
+			} else {
+				System.out.println("Not all tiles are valid");
+			}
+		} else {
+			System.out.println("Check TUI implementation, different list sizes rows cols tiles");
+		}
+
+		
 	}
 
 	/**
@@ -80,14 +114,14 @@ public class Board {
 	 * @param col Integer
 	 * @return boolean whether the place on the board is empty
 	 */
-	public boolean isEmpty(int row, int col) {
-//        System.out.println(getTile(91, 91));
-//        System.out.println("" + row + col);
-//        Tile tile = board[row][col];
-//        return tile.toString().equals("EMPTY EMPTY");
-        return board[row][col].toString().equals("EMPTY EMPTY");
+	/*@ requires row >= 0 && row <= DIM && col >= 0 && col <= DIM;
+	  ensures \result == (board[row][col].equals(emptyTile));
+	 */
+	private boolean isEmpty(int row, int col) {
+        return board[row][col].equals(emptyTile);
 
 	}
+	
 
 	/**
 	 * returns a boolean whether the entire board is empty or not.
@@ -104,43 +138,246 @@ public class Board {
 		return ans;
 	}
 	
+	
 	/**
-	 * returns a boolean wheter the given tile at the given coordinates is valid
+	 * Checks wheter placing a (given) tile on (given) coordinates is valid.
 	 * 
-	 * @param row Integer
-	 * @param col Integer
-	 * @param tile Tile (the Tile that needs to be checked)
-	 * @return boolean whether the move is valid
+	 * @param row integer, row to check the tile
+	 * @param col integer, col to check the tile
+	 * @param tile tile, tile to be checked
+	 * @return boolean wheter the move is valid or not
 	 */
-	public boolean validMove(int row, int col, Tile tile) {
-		return(validMoveStart(row, col, tile) || (validMoveNotStart(row, col, tile)) && validSurroundings(row, col, tile));
-	}
-	
-	public boolean validMoveStart(int row, int col, Tile tile) {
-		return (isEmptyBoard() && row == 91 && col == 91);
-	}
-	
-	public boolean validMoveNotStart(int row, int col, Tile tile) {
-		return (!isEmptyBoard() && isEmpty(row, col) && (row >= 0 && row <= DIM && col >= 0 && col<= DIM));
-	}
-	
-	public boolean validSurroundings(int row, int col, Tile tile) {
-		boolean differentTiles = false;
-		//First, check if there are lines of 6 tiles attacked to the tile you want to place 
-		//(if you want to place a tile, the current line must be shorter than 6 tiles)
-		boolean lineOfSix = true;
-		for (int i = 1; i < 7; i++) {
-			if (isEmpty(row, col+i) && isEmpty(row, col-i) && isEmpty(row+i, col) && isEmpty(row-i, col)) lineOfSix = false;
+	/*@ pure */public boolean validMove(int row, int col, Tile tile) {
+		boolean ans;
+		if (row >= 0 && row <= 183 && col >= 0 && col <= 183 && tile != null) {
+			if (isEmptyBoard()) {
+				ans = (row == 91 && col == 91);
+			} else {
+				if (isEmpty(row, col)) {
+					ans = validMoveAdvanced(row, col, tile);
+				} else {
+					ans = false;
+				}
+				
+			}
+		} else {
+			ans = false;
 		}
+		return ans;
+	}
+	
+	public boolean validMoveAdvanced(int row, int col, Tile tile) {
+		boolean[] right = validRight(row, col, tile);
+		boolean[] left = validLeft(row, col, tile);
+		boolean[] up = validUp(row, col, tile);
+		boolean[] down= validDown(row, col, tile);
+		boolean empty = right[1] && left[1] && up[1] && down[1];
+		return right[0] && left[0] && up[0] && down[0] && !empty;
+	}
+	
+	public boolean[] validRight(int row, int col, Tile tile) {
+		boolean empty = false;
+		boolean valid = false;
+		int length = getLengths(row, col)[0];
+		if (length == 0) {
+			empty = true;
+			valid = true;
+		} else if (length == 1) {
+			if (tile.getColor() == getTile(row, col+1).getColor() && 
+					tile.getShape() != getTile(row, col+1).getShape() ||
+					tile.getShape() == getTile(row, col+1).getShape() && 
+					tile.getColor() != getTile(row, col+1).getColor()) {
+				valid = true;
+			} else {
+				valid = false;
+			}
+		} else if (length < 6) {
+			boolean go = true;
+			for (int i = 1; i <= length && go; i++) {
+				if (tile.getColor() == getTile(row, col+i).getColor()) {
+					if (tile.getShape() != getTile(row, col+i).getShape()) {
+						valid = true;
+					} else {
+						go = false;
+						valid = false;
+					}
+				} else if (tile.getShape() == getTile(row, col+i).getShape()) {
+					valid = true;
+				} else {
+					go = false;
+					valid = false;
+				}
+			}
+		}
+		
+		boolean[] ans = {valid, empty};
+		return ans;
+	}
+	public boolean[] validLeft(int row, int col, Tile tile) {
+		boolean empty = false;
+		boolean valid = false;
+		int length = getLengths(row, col)[1];
+		if (length == 0) {
+			empty = true;
+			valid = true;
+		} else if (length == 1) {
+			if (tile.getColor() == getTile(row, col-1).getColor() && 
+					tile.getShape() != getTile(row, col-1).getShape() ||
+					tile.getShape() == getTile(row, col-1).getShape() && 
+					tile.getColor() != getTile(row, col-1).getColor()) {
+				valid = true;
+			} else {
+				valid = false;
+			}
+		} else if (length < 6) {
+			boolean go = true;
+			for (int i = 1; i <= length && go; i++) {
+				if (tile.getColor() == getTile(row, col-i).getColor()) {
+					if (tile.getShape() != getTile(row, col-i).getShape()) {
+						valid = true;
+					} else {
+						go = false;
+						valid = false;
+					}
+				} else if (tile.getShape() == getTile(row, col-i).getShape()) {
+					valid = true;
+				} else {
+					go = false;
+					valid = false;
+				}
+			}
+		}
+		
+		boolean[] ans = {valid, empty};
+		return ans;
+	}
+	public boolean[] validDown(int row, int col, Tile tile) {
+		boolean empty = false;
+		boolean valid = false;
+		int length = getLengths(row, col)[2];
+		if (length == 0) {
+			empty = true;
+			valid = true;
+		} else if (length == 1) {
+			if (tile.getColor() == getTile(row+1, col).getColor() && 
+					tile.getShape() != getTile(row+1, col).getShape() ||
+					tile.getShape() == getTile(row+1, col).getShape() && 
+					tile.getColor() != getTile(row+1, col).getColor()) {
+				valid = true;
+			} else {
+				valid = false;
+			}
+		} else if (length < 6) {
+			boolean go = true;
+			for (int i = 1; i <= length && go; i++) {
+				if (tile.getColor() == getTile(row+i, col).getColor()) {
+					if (tile.getShape() != getTile(row+i, col).getShape()) {
+						valid = true;
+					} else {
+						go = false;
+						valid = false;
+					}
+				} else if (tile.getShape() == getTile(row+i, col).getShape()) {
+					valid = true;
+				} else {
+					go = false;
+					valid = false;
+				}
+			}
+		}
+		
+		boolean[] ans = {valid, empty};
+		return ans;
+	}
+	public boolean[] validUp(int row, int col, Tile tile) {
+		boolean empty = false;
+		boolean valid = false;
+		int length = getLengths(row, col)[3];
+		if (length == 0) {
+			empty = true;
+			valid = true;
+		} else if (length == 1) {
+			if (tile.getColor() == getTile(row-1, col).getColor() && 
+					tile.getShape() != getTile(row-1, col).getShape() ||
+					tile.getShape() == getTile(row-1, col).getShape() && 
+					tile.getColor() != getTile(row-1, col).getColor()) {
+				valid = true;
+			} else {
+				valid = false;
+			}
+		} else if (length < 6) {
+			boolean go = true;
+			for (int i = 1; i <= length && go; i++) {
+				if (tile.getColor() == getTile(row-i, col).getColor()) {
+					if (tile.getShape() != getTile(row-i, col).getShape()) {
+						valid = true;
+					} else {
+						go = false;
+						valid = false;
+					}
+				} else if (tile.getShape() == getTile(row-i, col).getShape()) {
+					valid = true;
+				} else {
+					go = false;
+					valid = false;
+				}
+			}
+		}
+		
+		boolean[] ans = {valid, empty};
+		return ans;
+	}
+	
+	public int[] getLengths(int row, int col) {
+		//Four directions, right, left, up, down.
+		//Right:
+		int[] fourLengths = {0, 0, 0, 0};
+		boolean stop = false;
+		while (!stop) {
+			if (isEmpty(row, col+(fourLengths[0]+1))) {
+				stop = true;
+			} else {
+				fourLengths[0]++;
+			}
+		}
+		stop = false;
+		while (!stop) {
+			if (isEmpty(row, col-(fourLengths[1]+1))) {
+				stop = true;
+			} else {
+				fourLengths[1]++;
+			}
+		}
+		stop = false;
+		while (!stop) {
+			if (isEmpty(row+(fourLengths[2]+1), col)) {
+				stop = true;
+			} else {
+				fourLengths[2]++;
+			}
+		}
+		stop = false;
+		while (!stop) {
+			if (isEmpty(row-(fourLengths[3]+1), col)) {
+				stop = true;
+			} else {
+				fourLengths[3]++;
+			}
+		}
+		return fourLengths;
+	}
+	
+	
+	
+
+	
+	public boolean sameTiles(int col, int row, Tile tile) {
+		boolean differentTiles = true;
 		for (int i = 1; i < 6; i++) {
 			if (equalTiles(tile, getTile(row, col+i)) || equalTiles(tile, getTile(row, col-i)) || 
-					equalTiles(tile, getTile(row+i, col)) || equalTiles(tile, getTile(row-i, col))) differentTiles = true;
+					equalTiles(tile, getTile(row+i, col)) || equalTiles(tile, getTile(row-i, col))) differentTiles = false;
 		}
-		//You want lineOfSix to be false because if it is true then there are no empty tiles within 6 of the tile to be placed
-		//You want differentTiles to be false, becuase if it is true then there are other tiles in the surroundings which
-		//are the same
-
-		return !(lineOfSix || differentTiles);
+		return differentTiles;
 	}
 	
 	public boolean equalTiles(Tile tile1, Tile tile2) {
@@ -148,10 +385,6 @@ public class Board {
 	}
 
 
-
-    public boolean gameOver() {
-        return false;
-    }
 
 
     public void reset() {
@@ -174,7 +407,7 @@ public class Board {
         int maxRightIndex = 0;
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
-                if (!getTile(i,j).toString().equals("EMPTY EMPTY") && j > maxRightIndex) {
+                if (!isEmpty(i, j) && j > maxRightIndex) {
                     maxRightIndex = j;
                 }
             }
@@ -185,7 +418,7 @@ public class Board {
         int minLeftIndex = DIM;
         for (int i = DIM-1; i > 0; i--) {
             for (int j = DIM-1; j > 0; j--) {
-                if (!getTile(i,j).toString().equals("EMPTY EMPTY") && j < minLeftIndex) {
+                if (!isEmpty(i, j) && j < minLeftIndex) {
                     minLeftIndex = j;
                 }
             }
@@ -196,7 +429,7 @@ public class Board {
         int maxUpIndex = 0;
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
-                if (!getTile(i,j).toString().equals("EMPTY EMPTY") && i > maxUpIndex) {
+                if (!isEmpty(i, j) && i > maxUpIndex) {
                     maxUpIndex = j;
                 }
             }
@@ -207,7 +440,7 @@ public class Board {
         int minDownIndex = DIM;
         for (int i = DIM-1; i > 0; i--) {
             for (int j = DIM-1; j > 0; j--) {
-                if (!getTile(i,j).toString().equals("EMPTY EMPTY") && j < minDownIndex) {
+                if (!isEmpty(i, j) && j < minDownIndex) {
                     minDownIndex = j;
                 }
             }
@@ -217,24 +450,14 @@ public class Board {
 
     }
 
-//    public int testCount() {
-//        int counter = 0;
-//        for (int i = 0; i < DIM; i++) {
-//            for (int j = 0; j < DIM; j++) {
-//                if (!getTile(i,j).toString().equals("EMPTY EMPTY")) counter++;
-//            }
-//        }
-//        return counter;
-//    }
-
     public String toString() {
         String res = "";
         int[] boundaries = getBoundaries();
         int emptyMargin = 3; //For aesthetic purposes.
         for (int i = boundaries[3] - emptyMargin; i < (boundaries[2] + emptyMargin+1); i++) {
             for (int j = boundaries[1] - emptyMargin; j < boundaries[0] + emptyMargin+1; j++) {
-                if (getTile(i,j).toString().equals("EMPTY EMPTY")) {
-                    res = res + "              | ";
+                if (isEmpty(i, j)) {
+                    res = res + "               | ";
                 } else {
                     res = res + getTile(i,j).toString() + " | ";
                 }
