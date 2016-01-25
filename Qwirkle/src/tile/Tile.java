@@ -26,11 +26,7 @@ public class Tile {
 		assert shape != null;
 	}
 
-//    public Tile () {
-//        System.out.println("Empty tile constructor called, only use this for test purposes");
-//        this.color = Color.EMPTY;
-//        this.shape = Shape.EMPTY;
-//    }
+
 
 	//@ensures \result != null;
 	/*@ pure */ public Color getColor() {
@@ -45,9 +41,7 @@ public class Tile {
 	}
 
 	public String toString() {
-//        String result = "" + color + " " + shape;
-//        return String.format("%1$14s", "" + color + " " + shape);
-        return "" + color + " " + shape;
+        return String.format("%-14s", (color + " " + shape));
 	}
 	
     @Override

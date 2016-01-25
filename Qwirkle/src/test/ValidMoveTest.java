@@ -72,7 +72,7 @@ public class ValidMoveTest {
 		//Plaats een <green, circle> op 91,92
 		board.setTile(91, 92, tile3);
 		assertEquals(board.getTile(91,92), tile3);
-		//Plaats een <green, circle> op 90,92 terwijl er al een <green circle in deze rij staat
+		//Plaats een <green, circle> op 90,92 terwijl er al een <green, circle> in deze rij staat
 		board.setTile(91, 90, tile4);
 		assertEquals(board.getTile(91,90), empty);
 		

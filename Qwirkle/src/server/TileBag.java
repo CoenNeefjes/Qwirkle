@@ -43,8 +43,11 @@ public class TileBag {
         Tile tile = this.tiles.get(0);
         this.tiles.remove(0);
         return tile;
-
     }
+    
+//    public Set<Tile> getHand() {
+//    	return this.
+//    }
 
 
     public Set<Tile> drawHand() {
