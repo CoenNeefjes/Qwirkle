@@ -8,9 +8,22 @@ public class Tile {
 	private final Color color;
 	private final Shape shape;
 
+	//@private invariant this.color != null;
+	//@private invariant this.shape != null;
+	
+	//@requires color != null;
+	//@requires shape != null;
+	//@ensures getColor() == color;
+	//@ensures getShape() == shape;
 	public Tile (Color color, Shape shape) {
+		assert color != null;
+		assert shape != null;
 		this.color = color;
 		this.shape = shape;
+		assert getColor() == color;
+		assert getShape() == shape;
+		assert color != null;
+		assert shape != null;
 	}
 
 //    public Tile () {
@@ -19,11 +32,15 @@ public class Tile {
 //        this.shape = Shape.EMPTY;
 //    }
 
-	public Color getColor() {
+	//@ensures \result != null;
+	/*@ pure */ public Color getColor() {
+		assert color != null;
 		return color;
 	}
 
-	public Shape getShape() {
+	//@ensures \result != null;
+	/*@ pure */ public Shape getShape() {
+		assert shape != null;
 		return shape;
 	}
 
